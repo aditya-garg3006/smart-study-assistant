@@ -1,15 +1,12 @@
 import streamlit as st
 import numpy as np
-import json
-from prediction import predict_focus, load_tflite_model  # Import functions from prediction.py
+from prediction import predict_focus, load_tflite_model
 
 
-# Streamlit App
 def main():
     st.title("Smart Study Assistant with TFLite")
     st.subheader("Predict if you should continue studying or take a break")
 
-    # Generate or input data
     st.markdown("### Generate Random Input Data")
     if 'heart_rate' not in st.session_state:
         st.session_state.heart_rate = None
@@ -17,7 +14,6 @@ def main():
         st.session_state.stress_level = None
 
     if st.button("Generate Random Values"):
-        # Generate random values and store them in session state
         st.session_state.heart_rate = np.random.randint(50, 110)
         st.session_state.breathing_rate = np.random.randint(10, 25)
         st.session_state.stress_level = np.random.randint(1, 11)
@@ -33,27 +29,19 @@ def main():
     stress_level = st.number_input("Stress Level",
                                    value=st.session_state.stress_level if st.session_state.stress_level else 3, step=1)
 
-    # Store refined values back into session state
     st.session_state.heart_rate = heart_rate
     st.session_state.breathing_rate = breathing_rate
     st.session_state.stress_level = stress_level
 
-
-    # Predict focus level
     if st.button("Predict Focus Level"):
         if heart_rate is None or breathing_rate is None or stress_level is None:
             st.error("Please generate or input the data to make a prediction.")
         else:
-            # Load the TFLite model
             interpreter = load_tflite_model()
-
             st.write(f"Raw Input Data: Heart Rate = {heart_rate}, Breathing Rate = {breathing_rate}, Stress Level = {stress_level}")
-
             input_data = np.array([[heart_rate, breathing_rate, stress_level]])
-            # Predict focus level using the prediction function from prediction.py
-            focus_level_class = predict_focus(interpreter, input_data)
 
-            # Display result based on prediction
+            focus_level_class = predict_focus(interpreter, input_data)
             if focus_level_class == 2:
                 st.success("🟢 You should continue studying!")
             elif focus_level_class == 1:

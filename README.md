@@ -81,7 +81,7 @@ Once the server is "warmed up", the Wokwi simulation should work smoothly.
 
 ```json
 {
-  "focus_level": "Medium"
+  "focus_level": "High"
 }
 ```
 
